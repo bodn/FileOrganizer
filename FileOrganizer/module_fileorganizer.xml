@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_fileorganizer" default="compile.module.fileorganizer">
+  <dirname property="module.fileorganizer.basedir" file="${ant.file.module_fileorganizer}"/>
+  
+  <property name="module.jdk.home.fileorganizer" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.fileorganizer" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.fileorganizer" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.fileorganizer" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="fileorganizer.output.dir" value="${module.fileorganizer.basedir}/../out/production/FileOrganizer"/>
+  <property name="fileorganizer.testoutput.dir" value="${module.fileorganizer.basedir}/../out/test/FileOrganizer"/>
+  
+  <path id="fileorganizer.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="fileorganizer.module.production.classpath">
+    <path refid="${module.jdk.classpath.fileorganizer}"/>
+  </path>
+  
+  <path id="fileorganizer.runtime.production.module.classpath">
+    <pathelement location="${fileorganizer.output.dir}"/>
+  </path>
+  
+  <path id="fileorganizer.module.classpath">
+    <path refid="${module.jdk.classpath.fileorganizer}"/>
+    <pathelement location="${fileorganizer.output.dir}"/>
+  </path>
+  
+  <path id="fileorganizer.runtime.module.classpath">
+    <pathelement location="${fileorganizer.testoutput.dir}"/>
+    <pathelement location="${fileorganizer.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.fileorganizer">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.fileorganizer">
+    <patternset refid="excluded.from.module.fileorganizer"/>
+  </patternset>
+  
+  <path id="fileorganizer.module.sourcepath">
+    <dirset dir="${module.fileorganizer.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.fileorganizer" depends="compile.module.fileorganizer.production,compile.module.fileorganizer.tests" description="Compile module FileOrganizer"/>
+  
+  <target name="compile.module.fileorganizer.production" depends="register.custom.compilers" description="Compile module FileOrganizer; production classes">
+    <mkdir dir="${fileorganizer.output.dir}"/>
+    <javac2 destdir="${fileorganizer.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.fileorganizer}/javac">
+      <compilerarg line="${compiler.args.fileorganizer}"/>
+      <bootclasspath refid="fileorganizer.module.bootclasspath"/>
+      <classpath refid="fileorganizer.module.production.classpath"/>
+      <src refid="fileorganizer.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.fileorganizer"/>
+    </javac2>
+    
+    <copy todir="${fileorganizer.output.dir}">
+      <fileset dir="${module.fileorganizer.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.fileorganizer.tests" depends="register.custom.compilers,compile.module.fileorganizer.production" description="compile module FileOrganizer; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.fileorganizer" description="cleanup module">
+    <delete dir="${fileorganizer.output.dir}"/>
+    <delete dir="${fileorganizer.testoutput.dir}"/>
+  </target>
+</project>
